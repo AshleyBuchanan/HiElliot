@@ -14,25 +14,14 @@
         <!-- <div class="container"> -->
             <div class="row">
                 <div class="col-sm-5"></div>
-                <div class="col-sm-6">
+                <div class="col-sm-5">
                     <div id="data-pack" class="container">
-                        <div class="row">
-                            <% for(let retweet of top10retweets){ %>
-                                <div class="col-sm">n<div class="data" style="height: 100px"></div></div>
-                            <% } %>
-                            <!-- <div class="col-sm">2<div class="data"></div></div>
-                            <div class="col-sm">3<div class="data"></div></div>
-                            <div class="col-sm">4<div class="data"></div></div>
-                            <div class="col-sm">5<div class="data"></div></div>
-                            <div class="col-sm">6<div class="data"></div></div>
-                            <div class="col-sm">7<div class="data"></div></div>
-                            <div class="col-sm">8<div class="data"></div></div>
-                            <div class="col-sm">9<div class="data"></div></div>
-                            <div class="col-sm">0<div class="data"></div></div> -->
+                        <div id="data-showman" class="row">
+                            <!-- dynamic -->
                         </div>
                     </div>
-                    <div class="col-sm-1"></div>
                 </div>
+                <div class="col-sm-2"></div>
             </div>
  
         <!-- </div> -->
@@ -68,9 +57,12 @@
                             <div class="param-input col-3">
                                 <select name="language" id="language" class="form-select form-select-sm mb-3">
                                     <option>language</option>
-                                    <option <% if(currentparams.language==='en'){ %>selected <% } %> value="en">EN</option>
-                                    <option <% if(currentparams.language==='ja'){ %>selected <% } %> value="ja">JA</option>
-                                    <option <% if(currentparams.language==='sp'){ %>selected <% } %> value="sp">SP</option>
+                                    <option <% if(currentparams.language==='en'){ %>selected <% } %> value="en">English</option>
+                                    <option <% if(currentparams.language==='ja'){ %>selected <% } %> value="ja">Japanese</option>
+                                    <option <% if(currentparams.language==='es'){ %>selected <% } %> value="es">Spanish</option>
+                                    <option <% if(currentparams.language==='zh-cn'){ %>selected <% } %> value="ch">Chinese</option>
+                                    <option <% if(currentparams.language==='de'){ %>selected <% } %> value="de">German</option>
+                                    <option <% if(currentparams.language==='fr'){ %>selected <% } %> value="fr">French</option>
                                 </select>
                             </div>
                             <div class="param-input col-3">

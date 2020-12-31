@@ -6,6 +6,22 @@ const recents = document.querySelector('.recents');
 const phraseRow = document.querySelector('#phrase-row');
 const addPhraseDiv = document.querySelector('.button-holder');
 const addPhrase = document.querySelector('#add-phrase');
+const dataShowman = document.querySelector('#data-showman');
+
+for (let i = 0; i < 10; i++) {
+	const el = document.createElement('div');
+	el.classList.add('col-sm');
+	el.innerText = `${i}`;
+	el.addEventListener('click', () => {
+		console.log('clicked');
+	});
+	const inEl = document.createElement('div');
+	inEl.classList.add('data');
+	inEl.style.height = '10px';
+	el.appendChild(inEl);
+	dataShowman.appendChild(el);
+}
+const dataBar = document.querySelectorAll('.data');
 
 let phraseIndex = 1;
 addPhrase.addEventListener('click', () => {
@@ -26,70 +42,89 @@ addPhrase.addEventListener('click', () => {
 	phraseRow.appendChild(addPhraseDiv);
 });
 
-// for (let i = 0; i < 14; i++) {
-// 	const tweetElement = document.createElement('li');
-// 	tweetElement.innerText = '-';
-// 	tweetElement.style.opacity = 0.5;
-// 	recents.appendChild(tweetElement);
-// }
-
-const collectedTexts = []; // 'A', 'B', 'C', 'D' ];
-const top10Retweets = [];
-let intervalThrottle = 2.0;
+const collectedTexts = [];
+let top10Retweets;
+let intervalThrottle = 20.0;
 setInterval(async () => {
-	intervalThrottle = Math.min(Math.max(intervalThrottle, 2.0), 1000.0);
 	let resTexts;
 	let resRetweets;
-	//console.log(intervalThrottle);
+
 	try {
 		resTexts = await axios.get(`/texts`);
-		if (resTexts.data.data) {
-			//console.log(resTexts);
-			collectedTexts.push(resTexts.data.data);
-		}
-		resRetweets = await axios.get(`/retweets`);
-		if (resRetweets.data.data) {
-			//	console.log(resRetweets.data.data);
-			top10Retweets.push(resRetweets.data.data);
-		}
-		intervalThrottle *= 0.5;
-	} catch (e) {
-		intervalThrottle *= 2;
-	}
-}, 100 * intervalThrottle);
+		console.log(resTexts);
 
+		if (resTexts && resTexts.data.data) {
+			//console.log('--', resTexts.data.data);
+			collectedTexts.push(resTexts.data.data);
+			intervalThrottle *= 0.5;
+		} else {
+			intervalThrottle *= 2;
+		}
+
+		// resRetweets = await axios.get(`/retweets`);
+		// if (resRetweets.data.data) {
+		// 	//console.log(resRetweets.data.data);
+		// 	top10Retweets = resRetweets.data.data;
+		// 	top10Retweets.sort(compare);
+		// }
+	} catch (e) {
+		console.log(e);
+		intervalThrottle *= 4;
+	}
+
+	if (intervalThrottle > 1000.0) {
+		intervalThrottle = 1000.0;
+	}
+	if (intervalThrottle < 20.0) {
+		intervalThrottle = 20.0;
+	}
+	console.log(intervalThrottle);
+}, 1000);
+
+//build and update visual components
 setInterval(() => {
+	//tweet cloud
 	const recentsStyle = getComputedStyle(recents);
 	if (collectedTexts.length) {
-		//console.log('coll:', collectedTexts[0]);
-		const text = collectedTexts.shift();
 		const tweetElement = document.createElement('li');
-		tweetElement.innerText = text;
+		tweetElement.innerText = collectedTexts.shift();
 		tweetElement.style.opacity = 0.0025;
 		tweetElement.style.top = '93vh';
 		tweetElement.style.width = `${parseFloat(recentsStyle.width) - 50}px`;
-		//console.log(recentsStyle.width);
-		//tweetElement.style.maxWidth = parseFloat(recentsStyle.width) - 100;
 		tweetElement.constructor.prototype.data = 0.08;
+
 		recents.appendChild(tweetElement);
 	}
-	//console.log(`${getOffset(recents).top + recents.clientHeight - putin.height + 3}px`);
-	putin.style.top = `${getOffset(recents).top + recents.clientHeight - putin.height + 3}px`;
-}, 400);
 
+	//top-ten retweet-count graph
+	if (top10Retweets && top10Retweets.length > 0) {
+		for (let i = 0; i < 10; i++) {
+			const { __v } = top10Retweets.shift();
+			dataBar[i].style.height = `${__v}px`;
+		}
+	}
+}, 300);
+
+//superfluous animations	-----------------------------------------------
 setInterval(() => {
+	//if lis are being created, show putin
+	//and align his goofiness to the li window
 	const lis = document.querySelectorAll('li');
 	let c = 0;
 	if (lis.length > 0) {
 		putin.style.opacity = 0.25;
+		putin.style.top = `${
+			getOffset(recents).top + recents.clientHeight - putin.height + 3
+		}px`;
 	} else {
 		putin.style.opacity = 0.0;
 	}
+
+	//float lis into oblivion
 	for (let li of lis) {
 		c++;
 		li.data *= 1.0025;
-		//console.log(c, data);
-		let y_pos = parseFloat(li.style.top) - li.data * 2; //0.995;
+		let y_pos = parseFloat(li.style.top) - li.data * 2;
 		let alpha = parseFloat(li.style.opacity);
 
 		if (y_pos > 38.0) {
@@ -110,63 +145,8 @@ setInterval(() => {
 		li.style.opacity = alpha;
 	}
 }, 12.5);
-// setInterval(async () => {
-// 	const res = await axios.get(`/texts`);
-// 	const texts = res.data.data;
-// 	if (texts !== record) {
-// 		record = texts;
-// 		lis = document.querySelectorAll('li');
 
-// 		//console.log(texts[0]);
-// 		for (let i = 0; i < 14; i++) {
-// 			tweetThing[i].new_text = texts[i];
-// 			if (i > 0) {
-// 				tweetThing[i].next_text = texts[i - 1];
-// 			}
-// 		}
-// 	}
-
-// 	console.log('interval run');
-// }, 200);
-
-// //	const lis = document.querySelectorAll('li');
-// //	for (let li of lis) {
-// //		//recents.removeChild(li);
-// //	}
-// setInterval(() => {
-// 	for (let i = 0; i < 14; i++) {
-// 		if (tweetThing[i].text !== tweetThing[i].new_text) {
-// 			if (tweetThing[i].new_text !== tweetThing[i].next_text) {
-// 				tweetThing[i].fadeOut = true;
-// 			} else {
-// 				tweetThing[i].text = tweetThing[i].new_text;
-// 			}
-// 		}
-
-// 		if (tweetThing[i].fadeOut === false) {
-// 			if (tweetThing[i].alpha < 1.0) {
-// 				tweetThing[i].alpha += 0.32;
-// 			} else {
-// 				tweetThing[i].alpha = 1.0;
-// 			}
-// 		}
-// 		if (tweetThing[i].fadeOut === true) {
-// 			if (tweetThing[i].alpha > 0.0) {
-// 				tweetThing[i].alpha -= 0.32;
-// 			} else {
-// 				tweetThing[i].alpha = 0.0;
-// 				tweetThing[i].text = tweetThing[i].new_text;
-// 				tweetThing[i].fadeOut = false;
-// 			}
-// 		}
-
-// 		if (lis) {
-// 			lis[i].innerText = tweetThing[i].text;
-// 			lis[i].style.opacity = tweetThing[i].alpha;
-// 		}
-// 	}
-// }, 80);
-
+//simplification functions	-----------------------------------------------
 function getOffset(el) {
 	var _x = 0;
 	var _y = 0;
@@ -176,4 +156,17 @@ function getOffset(el) {
 		el = el.offsetParent;
 	}
 	return { top: _y, left: _x };
+}
+
+function compare(a, b) {
+	const elementA = a._id.toUpperCase();
+	const elementB = b._id.toUpperCase();
+
+	let comparison = 0;
+	if (elementA > elementB) {
+		comparison = 1;
+	} else if (elementA < elementB) {
+		comparison = -1;
+	}
+	return comparison;
 }

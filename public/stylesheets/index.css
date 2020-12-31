@@ -4,15 +4,17 @@ body {
 	height: 100vh;
 	padding: 10px;
 	color: rgb(144, 238, 144);
-	text-shadow: 0 0 5px rgba(144, 238, 144, .75), 0 0 20px rgba(144, 238, 144, .25);
+	text-shadow: 0 0 5px rgba(144, 238, 144, 0.75),
+		0 0 20px rgba(144, 238, 144, 0.25);
 	background-color: rgb(20, 20, 20);
 	box-shadow: inset 0 0 5rem rgba(0, 0, 0, 0.5);
 }
 
 input,
 select {
-	color: rgba(144, 238, 144, .5) !important;
-	text-shadow: 0 0 5px rgba(144, 238, 144, .5), 0 0 20px rgba(144, 238, 144, .125) !important;
+	color: rgba(144, 238, 144, 0.5) !important;
+	text-shadow: 0 0 5px rgba(144, 238, 144, 0.5),
+		0 0 20px rgba(144, 238, 144, 0.125) !important;
 	background-color: rgb(20, 20, 20) !important;
 }
 
@@ -21,39 +23,53 @@ select {
 }
 
 .param-input {
+	z-index: 20;
 	padding: 0 10px 0 0 !important;
 }
 
 .param-input:nth-of-type(4n) {
+	z-index: 20;
 	padding: 0 0 0 0 !important;
 }
 
+.form-select {
+	z-index: 20;
+}
+
+.button-holder {
+	z-index: 20 !important;
+}
+
 .btn {
-	color: rgba(144, 238, 144, .5);
+	z-index: 20 !important;
+	color: rgba(144, 238, 144, 0.5);
 	background-color: rgb(40, 40, 40);
 }
 
 .btn:hover {
+	z-index: 20 !important;
 	color: rgb(144, 238, 144);
-	text-shadow: 0 0 5px rgba(144, 238, 144, .75), 0 0 20px rgba(144, 238, 144, .25);
+	text-shadow: 0 0 5px rgba(144, 238, 144, 0.75),
+		0 0 20px rgba(144, 238, 144, 0.25);
 }
 
 li {
 	position: absolute;
-	font-size: .8em;
+	font-size: 0.8em;
 	margin-bottom: 15px;
 	overflow: hidden;
 	z-index: -2 !important;
-	/* transition: all ease 300ms; */
 }
 
 .recents {
 	margin-top: 20px;
 	overflow: hidden;
-	border: 2px solid rgba(144, 238, 144, .5);
+	border: 2px solid rgba(144, 238, 144, 0.5);
 	border-radius: 5px;
-	box-shadow: 0 0 2px rgba(144, 238, 144, .25), 0 0 10px rgba(144, 238, 144, .0625),
-		inset 0 0 2px rgba(144, 238, 144, .25), inset 0 0 10px rgba(144, 238, 144, .0625);
+	box-shadow: 0 0 2px rgba(144, 238, 144, 0.25),
+		0 0 10px rgba(144, 238, 144, 0.0625),
+		inset 0 0 2px rgba(144, 238, 144, 0.25),
+		inset 0 0 10px rgba(144, 238, 144, 0.0625);
 	height: 60vh;
 	padding: 15px 0 20px 30px;
 }
@@ -64,8 +80,6 @@ h3 {
 	top: 32px;
 	left: 30px;
 	background-color: rgb(20, 20, 20);
-	/* width:189px; */
-	/* width:max-content; */
 }
 
 .putin {
@@ -80,20 +94,26 @@ h3 {
 #data-pack {
 	position: absolute;
 	width: 400px;
-	/* align-items: baseline; */
-	/* left: 25%; */
 	top: 2%;
-	z-index: -1;
-	/* height: 112.5px; */
-	/* border: 2px solid rgb(144, 238, 144); */
-	/* border-radius: 2px; */
-	opacity: .5;
+	/* z-index: 1; */
+	opacity: 0.5;
+	/* display: none; */
 }
 
 .data {
-	margin: 0 0 0 2px;
-	/* padding: 5px; */
-	border-left: 5px solid rgba(144, 238, 144, .15);
-	border-image: linear-gradient(to bottom, rgba(144, 238, 144, .5), rgba(0, 0, 0, 0)) 1 100%;
-	/* height: 100px; */
+	margin: 0 0 0 0.5px;
+	border-left: 8px solid rgba(144, 238, 144, 0.15);
+	border-image: linear-gradient(
+			to bottom,
+			rgba(144, 238, 144, 0.5),
+			rgba(0, 0, 0, 0)
+		)
+		1 100%;
+	transition: all 600ms ease;
+}
+
+.data:hover {
+	border-image: none;
+	border-left: 8px solid rgba(144, 238, 144, 1);
+	transition: all 600ms ease;
 }
