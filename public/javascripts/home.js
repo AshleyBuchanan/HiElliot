@@ -1,5 +1,13 @@
 let record;
 let lis;
+let bigBlockIdStore = '';
+let bigBlockTrigger = false;
+let bigBlockAlpha = 0.01;
+let bigBlockHeight = 1.0;
+let displaysTrigger = false;
+let userListAlpha = 0.01;
+let userListHeight = 1.0;
+
 //test update
 const putin = document.querySelector('.putin');
 const recents = document.querySelector('.recents');
@@ -23,16 +31,43 @@ const dataBars = document.querySelectorAll('.data');
 for (let databar of dataBars) {
 	databar.addEventListener('click', async () => {
 		console.log('clicked', databar.value);
-		resRetweetId = await axios.get(`/retweet/${databar.value}`);
-		console.log(resRetweetId.data.data);
+
+		if (bigBlockIdStore === databar.value) {
+			bigBlockTrigger = !bigBlockTrigger;
+		} else {
+			bigBlockIdStore = databar.value;
+			bigBlockTrigger = true;
+		}
+
 		const older = document.querySelector('.big-block');
 		if (older) {
 			document.body.removeChild(older);
+			bigBlockAlpha = 0.01;
+			bigBlockHeight = 1.0;
 		}
-		const bigBlock = document.createElement('div');
-		bigBlock.classList.add('big-block');
 
-		document.body.appendChild(bigBlock);
+		for (let d of dataBars) {
+			d.classList.remove('active');
+		}
+		const groupings = document.querySelectorAll('.grouping');
+		for (let grouping of groupings) {
+			grouping.classList.remove('blurred');
+		}
+		if (bigBlockTrigger) {
+			databar.classList.add('active');
+
+			resRetweetId = await axios.get(`/retweet/${databar.value}`);
+			console.log(resRetweetId.data.data);
+
+			const bigBlock = document.createElement('div');
+			bigBlock.classList.add('big-block');
+			for (let grouping of groupings) {
+				grouping.classList.add('blurred');
+			}
+			document.body.appendChild(bigBlock);
+		} else {
+			displaysTrigger = false;
+		}
 	});
 }
 
@@ -98,7 +133,6 @@ setInterval(() => {
 		tweetElement.style.top = '93vh';
 		tweetElement.style.width = `${parseFloat(recentsStyle.width) - 50}px`;
 		tweetElement.constructor.prototype.data = 0.08;
-
 		recents.appendChild(tweetElement);
 	}
 
@@ -110,6 +144,13 @@ setInterval(() => {
 			dataBars[i].value = `${_id}`;
 		}
 	}
+
+	//if show page is created, trigger appearance functions
+	const bigBlock = document.querySelector('.big-block');
+	if (bigBlock && bigBlock.style.opacity === '') {
+		alphaCheck(bigBlock);
+		sizeCheck(bigBlock, showDisplays);
+	}
 }, 300);
 
 //superfluous animations	-----------------------------------------------
@@ -117,7 +158,6 @@ setInterval(() => {
 	//if lis are being created, show putin
 	//and align his goofiness to the li window
 	const lis = document.querySelectorAll('li');
-	let c = 0;
 	if (lis.length > 0) {
 		putin.style.opacity = 0.25;
 		putin.style.top = `${
@@ -128,8 +168,9 @@ setInterval(() => {
 	}
 
 	//float lis into oblivion
+	let i = 0;
 	for (let li of lis) {
-		c++;
+		i++;
 		li.data *= 1.0025;
 		let y_pos = parseFloat(li.style.top) - li.data * 2;
 		let alpha = parseFloat(li.style.opacity);
@@ -177,3 +218,39 @@ function compare(a, b) {
 	}
 	return comparison;
 }
+
+const alphaCheck = el => {
+	if (el.style.opacity === '') {
+		let aCycle = setInterval(() => {
+			if (bigBlockAlpha < 1.0) {
+				bigBlockAlpha *= 1.1;
+				bigBlockAlpha = Math.min(1.0, bigBlockAlpha);
+				el.style.opacity = bigBlockAlpha;
+			} else {
+				clearInterval(aCycle);
+			}
+		}, 10);
+	}
+};
+
+const sizeCheck = (el, fn) => {
+	if (el.style.height === '') {
+		let aCycle = setInterval(() => {
+			if (bigBlockHeight < 75.0) {
+				bigBlockHeight *= 1.1;
+				bigBlockHeight = Math.min(75.0, bigBlockHeight);
+				el.style.height = `${bigBlockHeight}vh`;
+				let diff = (100.0 - bigBlockHeight) * 0.5;
+				el.style.top = `${diff}vh`;
+			} else {
+				clearInterval(aCycle);
+				fn();
+			}
+		}, 10);
+	}
+};
+
+const showDisplays = () => {
+	displaysTrigger = true;
+	console.log(displaysTrigger);
+};

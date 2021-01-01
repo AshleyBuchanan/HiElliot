@@ -95,9 +95,7 @@ h3 {
 	position: absolute;
 	width: 400px;
 	top: 2%;
-	/* z-index: 1; */
 	opacity: 0.5;
-	/* display: none; */
 }
 
 .data {
@@ -112,18 +110,20 @@ h3 {
 	transition: all 600ms ease;
 }
 
-.data:hover {
+.data:hover,
+.active {
 	border-image: none;
 	border-left: 8px solid rgba(144, 238, 144, 1);
 	transition: all 600ms ease;
 }
 
 .big-block {
+	opacity: 0%;
 	width: 75vw;
-	height: 75vh;
-	background-color: rgba(20, 20, 20, 0.9);
+	height: 1vh;
+	background-color: rgba(20, 20, 20, 0.95);
 	position: absolute;
-	top: 12.5vh;
+	top: 50vh;
 	left: 12.5vw;
 	z-index: 30;
 	border: 2px solid rgba(144, 238, 144, 0.5);
@@ -132,4 +132,9 @@ h3 {
 		0 0 10px rgba(144, 238, 144, 0.0625),
 		inset 0 0 2px rgba(144, 238, 144, 0.25),
 		inset 0 0 10px rgba(144, 238, 144, 0.0625);
+}
+
+.blurred {
+	filter: blur(4px);
+	transition: all 1000ms linear;
 }
