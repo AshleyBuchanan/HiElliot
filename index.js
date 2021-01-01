@@ -12,26 +12,29 @@ const twit = require('twit');
 const { aggregate } = require('./models/user_model');
 
 const configT = {
-	api_key             : process.env.api_key,
-	api_key_secret      : process.env.api_key_secret,
-	bearer_token        : process.env.bearer_token,
-	access_token        : process.env.access_token,
-	access_token_secret : process.env.access_token_secret
+	api_key: process.env.api_key,
+	api_key_secret: process.env.api_key_secret,
+	bearer_token: process.env.bearer_token,
+	access_token: process.env.access_token,
+	access_token_secret: process.env.access_token_secret,
 };
 
 //initializations
 mongoose.connect('mongodb://localhost:27017/tweets', {
-	useNewUrlParser    : true,
-	useCreateIndex     : true,
-	useUnifiedTopology : true,
-	useFindAndModify   : false
+	useNewUrlParser: true,
+	useCreateIndex: true,
+	useUnifiedTopology: true,
+	useFindAndModify: false,
 });
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', async () => {
 	console.log('db connected');
 	//get 7 recently retrieved tweets
-	const entries = await Tweet.find().sort({ _id: -1 }).limit(14).populate('user');
+	const entries = await Tweet.find()
+		.sort({ _id: -1 })
+		.limit(14)
+		.populate('user');
 	//console.log('t-', entries);
 	for (let entry of entries) {
 		texts.push(`${entry.user[0].screen_name} --> ${entry.text}`);
@@ -39,21 +42,21 @@ db.once('open', async () => {
 });
 
 const T = new twit({
-	consumer_key        : configT.api_key,
-	consumer_secret     : configT.api_key_secret,
-	access_token        : configT.access_token,
-	access_token_secret : configT.access_token_secret,
-	timeout_ms          : 5 * 1000
+	consumer_key: configT.api_key,
+	consumer_secret: configT.api_key_secret,
+	access_token: configT.access_token,
+	access_token_secret: configT.access_token_secret,
+	timeout_ms: 5 * 1000,
 });
 const texts = [];
 let netting = [];
 
 const currentparams = {
-	method   : 'stream',
-	count    : '1',
-	language : 'en',
-	location : 'sanFrancisco',
-	phrases  : []
+	method: 'stream',
+	count: '1',
+	language: 'en',
+	location: 'sanFrancisco',
+	phrases: [],
 };
 
 // T.get('search/tweets', { q: 'banana since:2020-12-19', count: 1 }, function(err, data, res) {
@@ -61,18 +64,20 @@ const currentparams = {
 // });
 
 const earth = [];
-const sanFrancisco = [ '-122.75', '36.8', '-121.75', '37.8' ];
+const sanFrancisco = ['-122.75', '36.8', '-121.75', '37.8'];
 
-const search = async function(method, count, language, location, phrases) {
+const search = async function (method, count, language, location, phrases) {
 	let counter = 0;
 	if (method === 'stream') {
 		console.log(phrases);
-		console.log(`{ '${phrases}', 'stream', ${count}, '${language}', '${location}' }`);
+		console.log(
+			`{ '${phrases}', 'stream', ${count}, '${language}', '${location}' }`,
+		);
 		const stream = T.stream('statuses/filter', {
-			track     : phrases,
-			language  : language,
-			locations : sanFrancisco,
-			extended  : true
+			track: phrases,
+			language: language,
+			locations: sanFrancisco,
+			extended: true,
 		});
 
 		stream.on('tweet', async tweet => {
@@ -113,7 +118,9 @@ const search = async function(method, count, language, location, phrases) {
 
 			if (tweet.user.screen_name) {
 				let user;
-				user = await User.findOne({ screen_name: tweet.user.screen_name });
+				user = await User.findOne({
+					screen_name: tweet.user.screen_name,
+				});
 				if (user === null) {
 					console.log(`new user ${tweet.user.screen_name} created`);
 					user = new User();
@@ -126,7 +133,9 @@ const search = async function(method, count, language, location, phrases) {
 				let tweetObj;
 				tweetObj = await Tweet.findOne({ text: tweet.text });
 				if (tweetObj === null) {
-					console.log(`new tweet for ${tweet.user.screen_name} created`);
+					console.log(
+						`new tweet for ${tweet.user.screen_name} created`,
+					);
 					newFlag = true;
 					tweetObj = new Tweet();
 					tweetObj.text = tweet.text;
@@ -137,7 +146,9 @@ const search = async function(method, count, language, location, phrases) {
 					tweetObj.search_phrases.push(phrases);
 					tweetObj.user.push(user);
 				} else {
-					console.log(`${tweet.user.screen_name} pushed to existing tweet ${tweetObj._id}`);
+					console.log(
+						`${tweet.user.screen_name} pushed to existing tweet ${tweetObj._id}`,
+					);
 					newFlag = true;
 					tweetObj.user.push(user);
 				}
@@ -155,7 +166,9 @@ const search = async function(method, count, language, location, phrases) {
 			}
 		});
 	} else if (method === 'restful') {
-		console.log(`{ '${phrase}', 'restful', ${count}, '${language}', '${location}' }`);
+		console.log(
+			`{ '${phrase}', 'restful', ${count}, '${language}', '${location}' }`,
+		);
 	}
 };
 
@@ -198,7 +211,9 @@ app.get('/texts', (req, res) => {
 });
 
 app.get('/retweets', async (req, res) => {
-	const transmission = await Tweet.find({ __v: { $gt: 1 } }).sort({ __v: 'desc' }).limit(10);
+	const transmission = await Tweet.find({ __v: { $gt: 1 } })
+		.sort({ __v: 'desc' })
+		.limit(10);
 	if (transmission) {
 		//console.log('trans:', transmission);
 		res.send({ data: transmission });
@@ -211,5 +226,11 @@ app.listen(3000, (req, res) => {
 	console.log('serving on :3000');
 });
 
+app.get('/retweet/:id', async (req, res) => {
+	//console.log(req.params.id);
+	//res.send(req.params.id);
+	const transmission = await Tweet.findOne({ _id: req.params.id });
+	res.send({ data: transmission });
+});
 //mongo syntax:
 //db.tweets.find({user: {$in:[ObjectId("5fe4e79e5d468b044721a664")]}})

@@ -12,16 +12,29 @@ for (let i = 0; i < 10; i++) {
 	const el = document.createElement('div');
 	el.classList.add('col-sm');
 	el.innerText = `${i}`;
-	el.addEventListener('click', () => {
-		console.log('clicked');
-	});
+
 	const inEl = document.createElement('div');
 	inEl.classList.add('data');
 	inEl.style.height = '10px';
 	el.appendChild(inEl);
 	dataShowman.appendChild(el);
 }
-const dataBar = document.querySelectorAll('.data');
+const dataBars = document.querySelectorAll('.data');
+for (let databar of dataBars) {
+	databar.addEventListener('click', async () => {
+		console.log('clicked', databar.value);
+		resRetweetId = await axios.get(`/retweet/${databar.value}`);
+		console.log(resRetweetId.data.data);
+		const older = document.querySelector('.big-block');
+		if (older) {
+			document.body.removeChild(older);
+		}
+		const bigBlock = document.createElement('div');
+		bigBlock.classList.add('big-block');
+
+		document.body.appendChild(bigBlock);
+	});
+}
 
 let phraseIndex = 1;
 addPhrase.addEventListener('click', () => {
@@ -45,43 +58,36 @@ addPhrase.addEventListener('click', () => {
 const collectedTexts = [];
 let top10Retweets;
 let intervalThrottle = 20.0;
-setInterval(async () => {
+const loop = async () => {
 	let resTexts;
 	let resRetweets;
 
 	try {
 		resTexts = await axios.get(`/texts`);
-		console.log(resTexts);
 
 		if (resTexts && resTexts.data.data) {
-			//console.log('--', resTexts.data.data);
 			collectedTexts.push(resTexts.data.data);
 			intervalThrottle *= 0.5;
 		} else {
 			intervalThrottle *= 2;
 		}
 
-		// resRetweets = await axios.get(`/retweets`);
-		// if (resRetweets.data.data) {
-		// 	//console.log(resRetweets.data.data);
-		// 	top10Retweets = resRetweets.data.data;
-		// 	top10Retweets.sort(compare);
-		// }
+		resRetweets = await axios.get(`/retweets`);
+		if (resRetweets.data.data) {
+			top10Retweets = resRetweets.data.data;
+			top10Retweets.sort(compare);
+		}
 	} catch (e) {
 		console.log(e);
 		intervalThrottle *= 4;
 	}
 
-	if (intervalThrottle > 1000.0) {
-		intervalThrottle = 1000.0;
-	}
-	if (intervalThrottle < 20.0) {
-		intervalThrottle = 20.0;
-	}
-	console.log(intervalThrottle);
-}, 1000);
+	intervalThrottle = Math.min(5000.0, Math.max(20.0, intervalThrottle));
+	setTimeout(loop, intervalThrottle);
+};
+loop();
 
-//build and update visual components
+//build and update visual components	-----------------------------------
 setInterval(() => {
 	//tweet cloud
 	const recentsStyle = getComputedStyle(recents);
@@ -99,8 +105,9 @@ setInterval(() => {
 	//top-ten retweet-count graph
 	if (top10Retweets && top10Retweets.length > 0) {
 		for (let i = 0; i < 10; i++) {
-			const { __v } = top10Retweets.shift();
-			dataBar[i].style.height = `${__v}px`;
+			const { __v, _id } = top10Retweets.shift();
+			dataBars[i].style.height = `${__v}px`;
+			dataBars[i].value = `${_id}`;
 		}
 	}
 }, 300);
