@@ -327,7 +327,7 @@ const sizeCheck = (el, h, name, limit) => {
 		limit = 75.0;
 	}
 	if (el.style.height === '') {
-		console.log('run');
+		//console.log('run');
 		let aCycle = setInterval(() => {
 			if (h < limit) {
 				h *= 1.1;
