@@ -121,7 +121,7 @@ h3 {
 	opacity: 0%;
 	width: 75vw;
 	height: 1vh;
-	background-color: rgba(20, 20, 20, 0.95);
+	background-color: rgba(20, 20, 20, 0.7);
 	position: absolute;
 	top: 50vh;
 	left: 12.5vw;
@@ -135,6 +135,50 @@ h3 {
 }
 
 .blurred {
-	filter: blur(4px);
-	transition: all 1000ms linear;
+	/* filter: blur(4px); */
+	/* filter: brightness(25%); */
+	opacity: 0.1;
+	transition: all 500ms linear;
+}
+
+.column {
+	opacity: 0%;
+	padding: 10px 0 0 0;
+}
+
+.user-list {
+	position: relative;
+	font-size: 0.7em;
+	margin-bottom: 0;
+}
+
+.control {
+	padding-left: 23px;
+	overflow: auto;
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
+}
+
+.a-control {
+	padding-right: 23px;
+}
+
+.control::-webkit-scrollbar {
+	display: none;
+}
+.orange {
+	background-color: rgba(255, 165, 0, 0.25);
+	padding-bottom: 20px;
+}
+
+.yellow {
+	background-color: rgba(255, 255, 0, 0.25);
+}
+
+.red {
+	background-color: rgba(255, 0, 0, 0.25);
+}
+
+p {
+	font-size: 0.9em;
 }

@@ -7,6 +7,7 @@ let bigBlockHeight = 1.0;
 let displaysTrigger = false;
 let userListAlpha = 0.01;
 let userListHeight = 1.0;
+let splitHeight = 1.0;
 
 //test update
 const putin = document.querySelector('.putin');
@@ -56,14 +57,82 @@ for (let databar of dataBars) {
 		if (bigBlockTrigger) {
 			databar.classList.add('active');
 
+			//axios!!!!
 			resRetweetId = await axios.get(`/retweet/${databar.value}`);
 			console.log(resRetweetId.data.data);
 
 			const bigBlock = document.createElement('div');
 			bigBlock.classList.add('big-block');
+			const row = document.createElement('div');
+			row.classList.add('row');
+			const column1 = document.createElement('div');
+			column1.classList.add('col-4');
+			//column1.classList.add('orange');
+			column1.classList.add('column');
+			column1.classList.add('control');
+			//column1.style.overflow = 'hidden';
+			//column1.innerText = 'one';
+			const column2 = document.createElement('div');
+			column2.classList.add('col-8');
+			//column2.classList.add('yellow');
+			column2.classList.add('column');
+			column2.classList.add('a-control');
+			//column2.innerText = 'Two';
+			const row1 = document.createElement('div');
+			row1.classList.add('split');
+			const row2 = document.createElement('div');
+			row2.classList.add('red');
+			row2.classList.add('split');
+			//row2.innerText = 'Three';
 			for (let grouping of groupings) {
 				grouping.classList.add('blurred');
 			}
+
+			//information fill
+			const ul = document.createElement('ul');
+			ul.style.paddingLeft = '0';
+			column1.appendChild(ul);
+
+			for (let user of resRetweetId.data.data.user) {
+				//for (let i = 0; i < 2; i++) {
+				const li = document.createElement('li');
+				li.classList.add('user-list');
+				li.innerText = `${user.screen_name}`;
+				ul.appendChild(li);
+			}
+			column2.appendChild(row1);
+			column2.appendChild(row2);
+
+			let showText = true;
+			if (resRetweetId.data.data.full_text) {
+				const fullText = document.createElement('p');
+				fullText.innerHTML = `<p><strong>full_text: "</strong> ${resRetweetId.data.data.full_text} <strong>"</strong></p>`;
+				row1.appendChild(fullText);
+				showText = false;
+			}
+
+			if (resRetweetId.data.data.quoted_text) {
+				const quotedText = document.createElement('p');
+				quotedText.innerHTML = `<p><strong>quoted_text: "</strong> ${resRetweetId.data.data.quoted_text} <strong>"</strong></p>`;
+				row1.appendChild(quotedText);
+			}
+
+			if (resRetweetId.data.data.retweeted_text) {
+				const retweetedText = document.createElement('p');
+				retweetedText.innerHTML = `<p><strong>retweeted_text: "</strong> ${resRetweetId.data.data.retweeted_text} <strong>"</strong></p>`;
+				row1.appendChild(retweetedText);
+				showText = false;
+			}
+
+			if (showText) {
+				const stext = document.createElement('p');
+				stext.innerText = `text: \" ${resRetweetId.data.data.text} \"`;
+				row1.appendChild(stext);
+			}
+
+			row.appendChild(column1);
+			row.appendChild(column2);
+			bigBlock.appendChild(row);
 			document.body.appendChild(bigBlock);
 		} else {
 			displaysTrigger = false;
@@ -128,6 +197,7 @@ setInterval(() => {
 	const recentsStyle = getComputedStyle(recents);
 	if (collectedTexts.length) {
 		const tweetElement = document.createElement('li');
+		tweetElement.classList.add('tweet-text');
 		tweetElement.innerText = collectedTexts.shift();
 		tweetElement.style.opacity = 0.0025;
 		tweetElement.style.top = '93vh';
@@ -148,8 +218,26 @@ setInterval(() => {
 	//if show page is created, trigger appearance functions
 	const bigBlock = document.querySelector('.big-block');
 	if (bigBlock && bigBlock.style.opacity === '') {
-		alphaCheck(bigBlock);
-		sizeCheck(bigBlock, showDisplays);
+		alphaCheck(bigBlock, bigBlockAlpha);
+		sizeCheck(bigBlock, bigBlockHeight, 'displaysTrigger', 75);
+	}
+
+	//if bigBlock has appeared, fit the two columns
+	const columns = document.querySelectorAll('.column');
+	const rows = document.querySelectorAll('.split');
+	if (displaysTrigger) {
+		//console.log('is true');
+		for (let column of columns) {
+			alphaCheck(column, userListAlpha);
+			sizeCheck(column, userListHeight, '-', 74);
+			//console.log(parseInt(column.style.height));
+			rows[0].style.height = `${parseFloat(column.style.height) * 0.5}vh`;
+			rows[1].style.height = `${parseFloat(column.style.height) * 0.5}vh`;
+		}
+	} else {
+		for (let column of columns) {
+			sizeCheck(column, userListHeight, '-', 74);
+		}
 	}
 }, 300);
 
@@ -157,7 +245,7 @@ setInterval(() => {
 setInterval(() => {
 	//if lis are being created, show putin
 	//and align his goofiness to the li window
-	const lis = document.querySelectorAll('li');
+	const lis = document.querySelectorAll('.tweet-text');
 	if (lis.length > 0) {
 		putin.style.opacity = 0.25;
 		putin.style.top = `${
@@ -219,13 +307,13 @@ function compare(a, b) {
 	return comparison;
 }
 
-const alphaCheck = el => {
+const alphaCheck = (el, a) => {
 	if (el.style.opacity === '') {
 		let aCycle = setInterval(() => {
-			if (bigBlockAlpha < 1.0) {
-				bigBlockAlpha *= 1.1;
-				bigBlockAlpha = Math.min(1.0, bigBlockAlpha);
-				el.style.opacity = bigBlockAlpha;
+			if (a < 1.0) {
+				a *= 1.1;
+				a = Math.min(1.0, a);
+				el.style.opacity = a;
 			} else {
 				clearInterval(aCycle);
 			}
@@ -233,24 +321,32 @@ const alphaCheck = el => {
 	}
 };
 
-const sizeCheck = (el, fn) => {
+const sizeCheck = (el, h, name, limit) => {
+	if (!limit) {
+		console.log('limit assigned 75');
+		limit = 75.0;
+	}
 	if (el.style.height === '') {
+		console.log('run');
 		let aCycle = setInterval(() => {
-			if (bigBlockHeight < 75.0) {
-				bigBlockHeight *= 1.1;
-				bigBlockHeight = Math.min(75.0, bigBlockHeight);
-				el.style.height = `${bigBlockHeight}vh`;
-				let diff = (100.0 - bigBlockHeight) * 0.5;
+			if (h < limit) {
+				h *= 1.1;
+				h = Math.min(limit, h);
+				el.style.height = `${h}vh`;
+				let diff = (100.0 - h) * 0.5;
 				el.style.top = `${diff}vh`;
 			} else {
 				clearInterval(aCycle);
-				fn();
+				variableSwitcher(name);
 			}
 		}, 10);
+	} else {
+		return true;
 	}
 };
 
-const showDisplays = () => {
-	displaysTrigger = true;
-	console.log(displaysTrigger);
+const variableSwitcher = name => {
+	if (name === 'displaysTrigger') {
+		displaysTrigger = true;
+	}
 };

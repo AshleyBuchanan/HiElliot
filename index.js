@@ -229,7 +229,7 @@ app.listen(3000, (req, res) => {
 app.get('/retweet/:id', async (req, res) => {
 	//console.log(req.params.id);
 	//res.send(req.params.id);
-	const transmission = await Tweet.findOne({ _id: req.params.id });
+	const transmission = await Tweet.findById(req.params.id).populate('user');
 	res.send({ data: transmission });
 });
 //mongo syntax:
