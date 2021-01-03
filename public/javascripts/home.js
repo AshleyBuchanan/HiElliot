@@ -142,13 +142,52 @@ for (let databar of dataBars) {
 			//const setWidth = window.getComputedStyle(row2).width;
 			//const setHeight = window.getComputedStyle(row2).height;
 
+			mainColor = '#90ee9022';
 			//graph
-			plotThing = Plotly.plot(row2, [
+			plotThing = Plotly.plot(
+				//element
+				row2,
+				//data
+				[
+					{
+						y: [getData()],
+						type: 'line',
+						line: { color: '#90ee9060' },
+					},
+				],
+				//layout
 				{
-					y: [getData()],
-					type: 'line',
+					showlegend: false,
+					paper_bgcolor: '#00000000',
+					plot_bgcolor: '#00000000',
+					xaxis: {
+						color: '#90ee9060',
+						tickcolor: mainColor,
+						gridcolor: mainColor,
+						zerolinecolor: mainColor,
+					},
+					yaxis: {
+						color: '#90ee9060',
+						tickcolor: mainColor,
+						gridcolor: mainColor,
+						zerolinecolor: mainColor,
+					},
+					height: 300,
+					margin: {
+						l: 35,
+						r: 5,
+						b: 30,
+						t: 10,
+						pad: 4,
+					},
 				},
-			]);
+				//configuration
+				{
+					responsive: false,
+					staticPlot: true,
+					displayModeBar: false,
+				},
+			);
 		} else {
 			displaysTrigger = false;
 		}
