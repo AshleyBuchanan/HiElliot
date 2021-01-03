@@ -16,6 +16,7 @@ const phraseRow = document.querySelector('#phrase-row');
 const addPhraseDiv = document.querySelector('.button-holder');
 const addPhrase = document.querySelector('#add-phrase');
 const dataShowman = document.querySelector('#data-showman');
+let plotThing;
 
 for (let i = 0; i < 10; i++) {
 	const el = document.createElement('div');
@@ -70,8 +71,7 @@ for (let databar of dataBars) {
 			//column1.classList.add('orange');
 			column1.classList.add('column');
 			column1.classList.add('control');
-			//column1.style.overflow = 'hidden';
-			//column1.innerText = 'one';
+			//column1.innerText = 'One';
 			const column2 = document.createElement('div');
 			column2.classList.add('col-8');
 			//column2.classList.add('yellow');
@@ -81,12 +81,18 @@ for (let databar of dataBars) {
 			const row1 = document.createElement('div');
 			row1.classList.add('split');
 			const row2 = document.createElement('div');
-			row2.classList.add('red');
+			//row2.classList.add('red');
 			row2.classList.add('split');
+			row2.classList.add('graph-place');
 			//row2.innerText = 'Three';
+
 			for (let grouping of groupings) {
 				grouping.classList.add('blurred');
 			}
+
+			//row2.appendChild(row2Div);
+			column2.appendChild(row1);
+			column2.appendChild(row2);
 
 			//information fill
 			const ul = document.createElement('ul');
@@ -100,8 +106,6 @@ for (let databar of dataBars) {
 				li.innerText = `${user.screen_name}`;
 				ul.appendChild(li);
 			}
-			column2.appendChild(row1);
-			column2.appendChild(row2);
 
 			let showText = true;
 			if (resRetweetId.data.data.full_text) {
@@ -134,6 +138,17 @@ for (let databar of dataBars) {
 			row.appendChild(column2);
 			bigBlock.appendChild(row);
 			document.body.appendChild(bigBlock);
+
+			//const setWidth = window.getComputedStyle(row2).width;
+			//const setHeight = window.getComputedStyle(row2).height;
+
+			//graph
+			plotThing = Plotly.plot(row2, [
+				{
+					y: [getData()],
+					type: 'line',
+				},
+			]);
 		} else {
 			displaysTrigger = false;
 		}
@@ -280,7 +295,36 @@ setInterval(() => {
 		li.style.top = `${y_pos}vh`;
 		li.style.opacity = alpha;
 	}
+
+	// const svgs = document.querySelectorAll('.main-svg');
+	// const svgC = document.querySelector('.svg-container');
+	// const svgN = document.querySelector('.nsewdrag');
+	// const svgE = document.querySelector('.ewdrag');
+	// const row2 = document.querySelector('.split');
+	// if (row2 && svgs) {
+	// 	const setWidth = parseFloat(window.getComputedStyle(row2).width);
+
+	// 	//console.log('running');
+	// 	for (let svg of svgs) {
+	// 		svg.style.width = `${setWidth}px`;
+	// 	}
+	// 	svgC.style.width = `${setWidth - 200}px`;
+	// 	svgN.style.width = `${setWidth - 160}px`;
+	// 	svgE.style.width = `${setWidth - 160}px`;
+	// 	//	console.log(window.getComputedStyle(row2).width);
+	// }
 }, 12.5);
+
+setInterval(() => {
+	const row2 = document.querySelectorAll('.split')[1];
+
+	if (row2) {
+		const setWidth = parseFloat(window.getComputedStyle(row2).width);
+		const setHeight = parseFloat(window.getComputedStyle(row2).height);
+
+		Plotly.extendTraces(row2, { y: [[getData()]] }, [0]);
+	}
+}, 500);
 
 //simplification functions	-----------------------------------------------
 function getOffset(el) {
@@ -350,3 +394,7 @@ const variableSwitcher = name => {
 		displaysTrigger = true;
 	}
 };
+
+function getData() {
+	return Math.random();
+}

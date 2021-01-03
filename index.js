@@ -9,7 +9,6 @@ const mongoose = require('mongoose');
 const User = require('./models/user_model');
 const Tweet = require('./models/tweet_model');
 const twit = require('twit');
-const { aggregate } = require('./models/user_model');
 
 const configT = {
 	api_key: process.env.api_key,

@@ -121,7 +121,7 @@ h3 {
 	opacity: 0%;
 	width: 75vw;
 	height: 1vh;
-	background-color: rgba(20, 20, 20, 0.7);
+	background-color: rgba(20, 20, 20, 0.702);
 	position: absolute;
 	top: 50vh;
 	left: 12.5vw;
@@ -181,4 +181,8 @@ h3 {
 
 p {
 	font-size: 0.9em;
+}
+
+.graph-place {
+	background-color: red;
 }
