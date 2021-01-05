@@ -334,24 +334,6 @@ setInterval(() => {
 		li.style.top = `${y_pos}vh`;
 		li.style.opacity = alpha;
 	}
-
-	// const svgs = document.querySelectorAll('.main-svg');
-	// const svgC = document.querySelector('.svg-container');
-	// const svgN = document.querySelector('.nsewdrag');
-	// const svgE = document.querySelector('.ewdrag');
-	// const row2 = document.querySelector('.split');
-	// if (row2 && svgs) {
-	// 	const setWidth = parseFloat(window.getComputedStyle(row2).width);
-
-	// 	//console.log('running');
-	// 	for (let svg of svgs) {
-	// 		svg.style.width = `${setWidth}px`;
-	// 	}
-	// 	svgC.style.width = `${setWidth - 200}px`;
-	// 	svgN.style.width = `${setWidth - 160}px`;
-	// 	svgE.style.width = `${setWidth - 160}px`;
-	// 	//	console.log(window.getComputedStyle(row2).width);
-	// }
 }, 12.5);
 
 setInterval(() => {

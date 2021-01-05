@@ -9,7 +9,7 @@ const mongoose = require('mongoose');
 const User = require('./models/user_model');
 const Tweet = require('./models/tweet_model');
 const twit = require('twit');
-
+const testData = require('./testData.json');
 const configT = {
 	api_key: process.env.api_key,
 	api_key_secret: process.env.api_key_secret,
@@ -17,6 +17,35 @@ const configT = {
 	access_token: process.env.access_token,
 	access_token_secret: process.env.access_token_secret,
 };
+
+//run test
+// const latSet = [2];
+// const lngSet = [2];
+// latSet[0] = testData.geometry.coordinates[0][0][0][0];
+// lngSet[0] = testData.geometry.coordinates[0][0][0][1];
+// latSet[1] = testData.geometry.coordinates[0][0][0][0];
+// lngSet[1] = testData.geometry.coordinates[0][0][0][1];
+// for (let array of testData.geometry.coordinates[0][0]) {
+// 	//console.log(array[i]);
+// 	if (array[0] < latSet[0]) {
+// 		latSet[0] = array[0];
+// 		console.log('down0');
+// 	}
+// 	if (array[1] < lngSet[0]) {
+// 		lngSet[0] = array[1];
+// 		console.log('down1');
+// 	}
+// 	if (array[0] > latSet[1]) {
+// 		latSet[1] = array[0];
+// 		console.log('down0');
+// 	}
+// 	if (array[1] > lngSet[1]) {
+// 		lngSet[1] = array[1];
+// 		console.log('down1');
+// 	}
+// }
+// console.log(`[${latSet[0]}, ${lngSet[0]}]`);
+// console.log(`[${latSet[1]}, ${lngSet[1]}]`);
 
 //initializations
 mongoose.connect('mongodb://localhost:27017/tweets', {
@@ -64,6 +93,7 @@ const currentparams = {
 
 const earth = [];
 const sanFrancisco = ['-122.75', '36.8', '-121.75', '37.8'];
+const newYork = ['-74.25909', '40.477399', '-73.7001809', '40.9161785'];
 
 const search = async function (method, count, language, location, phrases) {
 	let counter = 0;
@@ -80,6 +110,7 @@ const search = async function (method, count, language, location, phrases) {
 		});
 
 		stream.on('tweet', async tweet => {
+			console.log(tweet);
 			let full_text = '';
 			let quoted_text = '';
 			let retweeted_text = '';
@@ -231,5 +262,6 @@ app.get('/retweet/:id', async (req, res) => {
 	const transmission = await Tweet.findById(req.params.id).populate('user');
 	res.send({ data: transmission });
 });
+
 //mongo syntax:
 //db.tweets.find({user: {$in:[ObjectId("5fe4e79e5d468b044721a664")]}})

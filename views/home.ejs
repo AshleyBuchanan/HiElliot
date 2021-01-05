@@ -11,81 +11,83 @@
 </head>
 <body>
     <div class="container mt-5">
-        <!-- <div class="container"> -->
-            <div class="row">
-                <div class="col-sm-5"></div>
-                <div class="col-sm-5">
-                    <div id="data-pack" class="container">
-                        <div id="data-showman" class="row">
-                            <!-- dynamic -->
+        <div class="row">
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-sm-5"></div>
+                    <div class="col-sm-5">
+                        <div id="data-pack" class="container">
+                            <div id="data-showman" class="row">
+                                <!-- dynamic -->
+                            </div>
                         </div>
+                    </div>
+                    <div class="col-sm-2"></div>
+                </div>
+                <h2 class="hi-elliot">Hi_ellioT</h2>
+                <div class="row grouping">
+                    <div class="col-10 offset-1">
+                        <form action="/lookat" method="GET">
+                            <div>
+                                <div id="phrase-row" class="row mb-2">
+                                    <% if(currentparams.phrases.length===0){ %>
+                                        <% currentparams.phrases[0]=''; %>
+                                    <% } %>
+                                    <% for(let i=0; i<currentparams.phrases.length; i++){ %>
+                                        <% let j=i+1 %>
+                                        <div class="param-input col-3 mt-1">
+                                            <input type="text" class="form-control form-control-sm" name="phrases[<%=i%>]" id="phrases[<%=i%>]" value="<%=currentparams.phrases[i]%>" placeholder="phrase[<%=j%>]">
+                                        </div>
+                                    <% } %>
+                                    <div class="button-holder col-2 mt-1"><button type="button" id="add-phrase" class="btn btn-sm">+1</button></div>
+                                </div>
+                                <div class="row">
+                                    <div class="param-input col-3">
+                                        <select name="method" id="method" class="form-select form-select-sm mb-3">
+                                            <option>method</option>
+                                            <option <% if(currentparams.method==='stream'){ %>selected <% } %> value="stream">stream</option>
+                                            <option <% if(currentparams.method==='restful'){ %>selected <% } %> value="restful">restful</option>
+                                          </select>
+                                    </div>
+                                    <div class="param-input col-3">
+                                        <input type="text" class="form-control form-control-sm" name="count" id="count" placeholder="count" value="<%= currentparams.count %>">
+                                    </div>
+                                    <div class="param-input col-3">
+                                        <select name="language" id="language" class="form-select form-select-sm mb-3">
+                                            <option>language</option>
+                                            <option <% if(currentparams.language==='en'){ %>selected <% } %> value="en">English</option>
+                                            <option <% if(currentparams.language==='ja'){ %>selected <% } %> value="ja">Japanese</option>
+                                            <option <% if(currentparams.language==='es'){ %>selected <% } %> value="es">Spanish</option>
+                                            <option <% if(currentparams.language==='zh-cn'){ %>selected <% } %> value="ch">Chinese</option>
+                                            <option <% if(currentparams.language==='de'){ %>selected <% } %> value="de">German</option>
+                                            <option <% if(currentparams.language==='fr'){ %>selected <% } %> value="fr">French</option>
+                                        </select>
+                                    </div>
+                                    <div class="param-input col-3">
+                                        <select name="location" id="location" class="form-select form-select-sm mb-3">
+                                            <option>location</option>
+                                            <option <% if(currentparams.location==='earth'){ %>selected <% } %> value="earth">Earth</option>
+                                            <option <% if(currentparams.location==='sanFrancisco'){ %>selected <% } %> value="sanFrancisco">San Francisco</option>
+                                            <option <% if(currentparams.location==='newYork'){ %>selected <% } %> value="newYork">New York</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <button type="submit" class="btn btn-sm mb-3">Submit</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-                <div class="col-sm-2"></div>
+                <div>
+                    <h3 class="grouping">actively retrieved</h3>
+        
+                    <ul class="recents grouping">
+                    </ul>
+                    <img class="putin grouping" src="https://i.gifer.com/ZAc2.gif" alt=""> 
+                </div>
             </div>
- 
-        <!-- </div> -->
- 
-        <h2 class="hi-elliot">Hi_ellioT</h2>
-        <div class="row grouping">
-            <div class="col-10 offset-1">
-                <form action="/lookat" method="GET">
-                    <div>
-                        <div id="phrase-row" class="row mb-2">
-                            <% if(currentparams.phrases.length===0){ %>
-                                <% currentparams.phrases[0]=''; %>
-                            <% } %>
-                            <% for(let i=0; i<currentparams.phrases.length; i++){ %>
-                                <% let j=i+1 %>
-                                <div class="param-input col-3 mt-1">
-                                    <input type="text" class="form-control form-control-sm" name="phrases[<%=i%>]" id="phrases[<%=i%>]" value="<%=currentparams.phrases[i]%>" placeholder="phrase[<%=j%>]">
-                                </div>
-                            <% } %>
-                            <div class="button-holder col-2 mt-1"><button type="button" id="add-phrase" class="btn btn-sm">+1</button></div>
-                        </div>
-                        <div class="row">
-                            <div class="param-input col-3">
-                                <select name="method" id="method" class="form-select form-select-sm mb-3">
-                                    <option>method</option>
-                                    <option <% if(currentparams.method==='stream'){ %>selected <% } %> value="stream">stream</option>
-                                    <option <% if(currentparams.method==='restful'){ %>selected <% } %> value="restful">restful</option>
-                                  </select>
-                            </div>
-                            <div class="param-input col-3">
-                                <input type="text" class="form-control form-control-sm" name="count" id="count" placeholder="count" value="<%= currentparams.count %>">
-                            </div>
-                            <div class="param-input col-3">
-                                <select name="language" id="language" class="form-select form-select-sm mb-3">
-                                    <option>language</option>
-                                    <option <% if(currentparams.language==='en'){ %>selected <% } %> value="en">English</option>
-                                    <option <% if(currentparams.language==='ja'){ %>selected <% } %> value="ja">Japanese</option>
-                                    <option <% if(currentparams.language==='es'){ %>selected <% } %> value="es">Spanish</option>
-                                    <option <% if(currentparams.language==='zh-cn'){ %>selected <% } %> value="ch">Chinese</option>
-                                    <option <% if(currentparams.language==='de'){ %>selected <% } %> value="de">German</option>
-                                    <option <% if(currentparams.language==='fr'){ %>selected <% } %> value="fr">French</option>
-                                </select>
-                            </div>
-                            <div class="param-input col-3">
-                                <select name="location" id="location" class="form-select form-select-sm mb-3">
-                                    <option>location</option>
-                                    <option <% if(currentparams.location==='earth'){ %>selected <% } %> value="earth">Earth</option>
-                                    <option <% if(currentparams.location==='sanFrancisco'){ %>selected <% } %> value="sanFrancisco">San Francisco</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <button type="submit" class="btn btn-sm mb-3">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        <div>
-            <h3 class="grouping">actively retrieved</h3>
-
-            <ul class="recents grouping">
-            </ul>
-            <img class="putin grouping" src="https://i.gifer.com/ZAc2.gif" alt=""> 
+            <div class="col-6"></div>
         </div>
     </div>
  
