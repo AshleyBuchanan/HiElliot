@@ -9,7 +9,7 @@ const mongoose = require('mongoose');
 const User = require('./models/user_model');
 const Tweet = require('./models/tweet_model');
 const twit = require('twit');
-const testData = require('./testData.json');
+const testData = require('./testData_LZ.json');
 const configT = {
 	api_key: process.env.api_key,
 	api_key_secret: process.env.api_key_secret,
@@ -19,8 +19,32 @@ const configT = {
 };
 
 //run test
-// const latSet = [2];
-// const lngSet = [2];
+const latSet = [2];
+const lngSet = [2];
+latSet[0] = testData.geometry.coordinates[0][0][0];
+lngSet[0] = testData.geometry.coordinates[0][0][1];
+latSet[1] = testData.geometry.coordinates[0][0][0];
+lngSet[1] = testData.geometry.coordinates[0][0][1];
+for (let array of testData.geometry.coordinates[0]) {
+	//console.log(array[i]);
+	if (array[0] < latSet[0]) {
+		latSet[0] = array[0];
+		console.log('down0');
+	}
+	if (array[1] < lngSet[0]) {
+		lngSet[0] = array[1];
+		console.log('down1');
+	}
+	if (array[0] > latSet[1]) {
+		latSet[1] = array[0];
+		console.log('down0');
+	}
+	if (array[1] > lngSet[1]) {
+		lngSet[1] = array[1];
+		console.log('down1');
+	}
+}
+
 // latSet[0] = testData.geometry.coordinates[0][0][0][0];
 // lngSet[0] = testData.geometry.coordinates[0][0][0][1];
 // latSet[1] = testData.geometry.coordinates[0][0][0][0];
@@ -44,8 +68,8 @@ const configT = {
 // 		console.log('down1');
 // 	}
 // }
-// console.log(`[${latSet[0]}, ${lngSet[0]}]`);
-// console.log(`[${latSet[1]}, ${lngSet[1]}]`);
+console.log(`[${latSet[0]}, ${lngSet[0]}]`);
+console.log(`[${latSet[1]}, ${lngSet[1]}]`);
 
 //initializations
 mongoose.connect('mongodb://localhost:27017/tweets', {
@@ -94,6 +118,8 @@ const currentparams = {
 const earth = [];
 const sanFrancisco = ['-122.75', '36.8', '-121.75', '37.8'];
 const newYork = ['-74.25909', '40.477399', '-73.7001809', '40.9161785'];
+const leipzig = [12.2366519, 51.2381704, 12.5424407, 51.4481145];
+//const leipzig = [51.2381704, 12.2366519, 51.4481145, 12.5424407];
 
 const search = async function (method, count, language, location, phrases) {
 	let counter = 0;
@@ -102,10 +128,19 @@ const search = async function (method, count, language, location, phrases) {
 		console.log(
 			`{ '${phrases}', 'stream', ${count}, '${language}', '${location}' }`,
 		);
+		if (location === 'sanFrancisco') {
+			objectLocation = sanFrancisco;
+		}
+		if (location === 'newYork') {
+			objectLocation = newYork;
+		}
+		if (location === 'leipzig') {
+			objectLocation = leipzig;
+		}
 		const stream = T.stream('statuses/filter', {
 			track: phrases,
-			language: language,
-			locations: sanFrancisco,
+			//language: language,
+			locations: objectLocation,
 			extended: true,
 		});
 
